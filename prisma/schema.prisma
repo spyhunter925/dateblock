@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Forum {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime        @default(now())
+  archivedAt  DateTime?
+  memberships ForumMembership[]
+  invites     ForumInvite[]
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  passwordHash  String
+  displayName   String
+  role          UserRole        @default(forum_member)
+  createdAt     DateTime        @default(now())
+  memberships   ForumMembership[]
+  blockedDates  BlockedDate[]
+  notifications Notification[]
+}
+
+enum UserRole {
+  global_admin
+  forum_member
+}
+
+model ForumMembership {
+  id       String   @id @default(cuid())
+  userId   String
+  forumId  String
+  joinedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  forum    Forum    @relation(fields: [forumId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, forumId])
+  @@index([forumId])
+}
+
+model BlockedDate {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String   // YYYY-MM-DD
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+model ForumInvite {
+  id        String    @id @default(cuid())
+  forumId   String
+  email     String
+  token     String    @unique
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  forum     Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  BLOCKS_CHANGED
+}
