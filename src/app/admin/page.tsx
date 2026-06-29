@@ -24,12 +24,20 @@ export default async function AdminPage() {
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Portal</h1>
-          <Link
-            href="/"
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
-          >
-            Back home
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/users"
+              className="rounded-lg border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100"
+            >
+              Manage Users
+            </Link>
+            <Link
+              href="/"
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              Back home
+            </Link>
+          </div>
         </div>
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -21,6 +21,10 @@ export default async function ForumPage() {
     )
   }
 
+  const memberCount = await prisma.forumMembership.count({
+    where: { forumId: membership.forumId },
+  })
+
   const blockedDates = await prisma.blockedDate.findMany({
     where: {
       user: {
@@ -41,7 +45,12 @@ export default async function ForumPage() {
       <div className="relative mx-auto max-w-4xl">
         <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{membership.forum.name}</h1>
+            <h1 className="text-2xl font-bold">
+              {membership.forum.name}{" "}
+              <span className="text-lg font-normal text-slate-500">
+                ({memberCount} member{memberCount !== 1 ? "s" : ""})
+              </span>
+            </h1>
             <p className="text-sm text-slate-600">Forum aggregate calendar</p>
           </div>
           <div className="flex gap-2">
@@ -61,6 +70,7 @@ export default async function ForumPage() {
         </div>
         <ForumCalendarClient
           currentUserId={session.user.id}
+          initialMonth={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
           blockedDates={blockedDates.map((b) => ({
             userId: b.userId,
             userName: b.user.displayName,

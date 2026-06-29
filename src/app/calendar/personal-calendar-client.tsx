@@ -17,6 +17,7 @@ interface Props {
   userName: string
   forumName: string
   initialBlockedDates: BlockedDateEntry[]
+  initialMonth?: Date
 }
 
 export function PersonalCalendarClient({
@@ -24,8 +25,9 @@ export function PersonalCalendarClient({
   userName,
   forumName,
   initialBlockedDates,
+  initialMonth,
 }: Props) {
-  const [month, setMonth] = useState(new Date())
+  const [month, setMonth] = useState(initialMonth ?? new Date())
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
   const [blockedDates, setBlockedDates] = useState<BlockedDateEntry[]>(initialBlockedDates)
   const [lastAction, setLastAction] = useState<{ type: "block" | "unblock"; dates: string[] } | null>(null)

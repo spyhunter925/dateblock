@@ -2,7 +2,11 @@ import { auth, signIn } from "@/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: { error?: string }
+}) {
   const session = await auth()
   if (session?.user) redirect("/")
 
@@ -13,18 +17,34 @@ export default async function LoginPage() {
           <h1 className="text-2xl font-bold">Sign in to Dateblock</h1>
           <p className="mt-2 text-sm text-slate-600">Enter your email and password.</p>
         </div>
+
+        {searchParams?.error === "invalid" && (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            Invalid email or password.
+          </div>
+        )}
+        {searchParams?.error === "notfound" && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            No account found with that email.
+          </div>
+        )}
+
         <form
           action={async (formData) => {
             "use server"
-            const result = await signIn("credentials", {
-              email: formData.get("email") as string,
-              password: formData.get("password") as string,
-              redirect: false,
-            })
-            if (result?.error) {
+            try {
+              const result = await signIn("credentials", {
+                email: formData.get("email") as string,
+                password: formData.get("password") as string,
+                redirect: false,
+              })
+              if (result?.error) {
+                redirect("/login?error=invalid")
+              }
+              redirect("/")
+            } catch {
               redirect("/login?error=invalid")
             }
-            redirect("/")
           }}
           className="space-y-4"
         >

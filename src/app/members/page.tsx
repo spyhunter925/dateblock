@@ -92,6 +92,7 @@ export default async function MembersPage({
             userId={selectedMember.userId}
             userName={selectedMember.user.displayName}
             isCurrentUser={selectedMember.userId === session.user.id}
+            initialMonth={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
             blockedDates={blockedDates}
           />
         ) : (

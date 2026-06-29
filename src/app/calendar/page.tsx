@@ -24,6 +24,7 @@ export default async function CalendarPage() {
           userId={session.user.id}
           userName={session.user.name || "You"}
           forumName={membership?.forum.name || "No forum"}
+          initialMonth={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
           initialBlockedDates={blockedDates.map((b) => ({
             userId: b.userId,
             userName: session.user.name || "You",

@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ChangePasswordForm } from "./change-password-form"
+import { ChangeEmailForm } from "./change-email-form"
 
 export default async function ProfilePage() {
   const session = await auth()
@@ -22,6 +23,11 @@ export default async function ProfilePage() {
             Back home
           </Link>
         </div>
+
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold">Change email</h2>
+          <ChangeEmailForm currentEmail={session.user.email ?? ""} />
+        </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold">Change password</h2>

@@ -7,7 +7,11 @@ import {
   createMember,
   removeMember,
   resetMemberPassword,
+  deleteUser,
+  revokeInvite,
+  changeUserEmail,
 } from "../../actions"
+import { DeleteUserButton } from "../../delete-user-button"
 
 export default async function ForumDetailPage({
   params,
@@ -191,14 +195,37 @@ export default async function ForumDetailPage({
                         Reset password
                       </button>
                     </form>
+                    <form action={changeUserEmail.bind(null, m.userId)} className="flex items-center gap-2">
+                      <input
+                        name="newEmail"
+                        type="email"
+                        defaultValue={m.user.email}
+                        required
+                        className="w-40 rounded-lg border border-slate-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                      >
+                        Save email
+                      </button>
+                    </form>
                     <form action={removeMember.bind(null, forum.id, m.userId)}>
                       <button
                         type="submit"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm text-red-700 hover:bg-red-100"
                       >
-                        Remove
+                        Remove from forum
                       </button>
                     </form>
+                    {m.userId !== session.user.id && (
+                      <DeleteUserButton
+                        userId={m.userId}
+                        userName={m.user.displayName}
+                        userEmail={m.user.email}
+                        deleteAction={deleteUser}
+                      />
+                    )}
                   </div>
                 </li>
               ))}
@@ -220,6 +247,14 @@ export default async function ForumDetailPage({
                       Expires {invite.expiresAt.toLocaleDateString()}
                     </p>
                   </div>
+                  <form action={revokeInvite.bind(null, invite.id)}>
+                    <button
+                      type="submit"
+                      className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm text-amber-800 hover:bg-amber-100"
+                    >
+                      Revoke
+                    </button>
+                  </form>
                 </li>
               ))}
             </ul>

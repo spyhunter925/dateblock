@@ -278,7 +278,16 @@ export function CalendarGrid({
             >
               <span className="font-medium">{format(date, "d")}</span>
               {mode === "forum" && info.blockerNames && info.blockerNames.length > 0 && (
-                <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-amber-600" />
+                <span className="absolute bottom-1 left-1/2 flex -translate-x-1/2 gap-[2px]">
+                  {Array.from({
+                    length: Math.min(info.blockerNames!.length, 4),
+                  }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="inline-block h-1.5 w-1.5 rounded-full bg-amber-600"
+                    />
+                  ))}
+                </span>
               )}
             </button>
           )

@@ -13,10 +13,11 @@ interface BlockedDateEntry {
 interface Props {
   currentUserId: string
   blockedDates: BlockedDateEntry[]
+  initialMonth?: Date
 }
 
-export function ForumCalendarClient({ currentUserId, blockedDates }: Props) {
-  const [month, setMonth] = useState(new Date())
+export function ForumCalendarClient({ currentUserId, blockedDates, initialMonth }: Props) {
+  const [month, setMonth] = useState(initialMonth ?? new Date())
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
   const [selectedDateInfo, setSelectedDateInfo] = useState<CalendarDayInfo | null>(null)
 

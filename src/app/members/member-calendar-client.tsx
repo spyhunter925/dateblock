@@ -14,10 +14,11 @@ interface Props {
   userName: string
   isCurrentUser: boolean
   blockedDates: BlockedDateEntry[]
+  initialMonth?: Date
 }
 
-export function MemberCalendarClient({ userId, userName, isCurrentUser, blockedDates }: Props) {
-  const [month, setMonth] = useState(new Date())
+export function MemberCalendarClient({ userId, userName, isCurrentUser, blockedDates, initialMonth }: Props) {
+  const [month, setMonth] = useState(initialMonth ?? new Date())
 
   return (
     <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">

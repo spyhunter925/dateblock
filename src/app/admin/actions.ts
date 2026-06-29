@@ -218,3 +218,61 @@ export async function removeMember(forumId: string, userId: string) {
 
   revalidatePath(`/admin/forums/${forumId}`)
 }
+
+export async function deleteUser(userId: string) {
+  const session = await auth()
+  if (!session?.user || session.user.role !== "global_admin") {
+    throw new Error("Unauthorized")
+  }
+
+  // Prevent admin from deleting themselves
+  if (userId === session.user.id) {
+    throw new Error("Cannot delete your own account")
+  }
+
+  // Cascade deletes memberships, blocked dates, and notifications via Prisma schema
+  await prisma.user.delete({
+    where: { id: userId },
+  })
+
+  revalidatePath("/admin/users")
+  revalidatePath("/admin/forums")
+}
+
+export async function revokeInvite(inviteId: string) {
+  const session = await auth()
+  if (!session?.user || session.user.role !== "global_admin") {
+    throw new Error("Unauthorized")
+  }
+
+  await prisma.forumInvite.delete({
+    where: { id: inviteId },
+  })
+
+  revalidatePath("/admin")
+}
+
+export async function changeUserEmail(userId: string, formData: FormData) {
+  const session = await auth()
+  if (!session?.user || session.user.role !== "global_admin") {
+    throw new Error("Unauthorized")
+  }
+
+  const newEmail = ((formData.get("newEmail") as string) || "").trim().toLowerCase()
+  if (!newEmail || !newEmail.includes("@")) {
+    throw new Error("Invalid email address")
+  }
+
+  const existing = await prisma.user.findUnique({ where: { email: newEmail } })
+  if (existing && existing.id !== userId) {
+    throw new Error("Email already in use by another user")
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { email: newEmail },
+  })
+
+  revalidatePath("/admin/users")
+  revalidatePath("/admin/forums")
+}
